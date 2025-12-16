@@ -26,5 +26,5 @@ This will:
 ✔ Print seed generated: XXXX events
 
 Features Implemented:
-- Filtering, summary, scrollable table.
+- Filtering, summary, scrollable table, Critical Vehicle Detection & Alerting.
 - Responsive UI.
