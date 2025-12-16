@@ -4,64 +4,87 @@ import { EventFiltersDto } from './dto/event-filters.dto';
 
 @Injectable()
 export class EventsService {
-  constructor(private repo: EventsRepository) { }
+  constructor(private readonly repo: EventsRepository) {}
+
 
   getEvents(filters: EventFiltersDto) {
+  let events = this.repo.findAll();
+
+  if (filters.vehicle && filters.vehicle.trim() !== '') {
+    const v = filters.vehicle.trim();
+    events = events.filter(e => e.vehicleId === v);
+  }
+
+  if (filters.code && filters.code.trim() !== '') {
+    const c = filters.code.trim();
+    events = events.filter(e => e.code === c);
+  }
+
+  if (filters.level && filters.level.trim() !== '') {
+    const l = filters.level.trim();
+    events = events.filter(e => e.level === l);
+  }
+
+  if (filters.from && filters.from !== '') {
+    const from = new Date(filters.from);
+    events = events.filter(e => new Date(e.timestamp) >= from);
+  }
+
+  if (filters.to && filters.to !== '') {
+    const to = new Date(filters.to);
+    events = events.filter(e => new Date(e.timestamp) <= to);
+  }
+
+  return events;
+}
+
+
+
+  getPaginatedEvents(filters: EventFiltersDto) {
+  let events = this.getEvents(filters); 
+
+  const page = Number(filters.page) || 1;
+  const limit = Number(filters.limit) || 20;
+
+  const total = events.length;
+  const start = (page - 1) * limit;
+  const end = start + limit;
+
+
+  return {
+    data: events.slice(start, end),
+    total,
+    page,
+    limit
+  };
+}
+
+
+
+ 
+  errorsPerVehicle() {
     const all = this.repo.findAll();
 
-    return all.filter((e) => {
-      if (filters.vehicle && e.vehicleId !== filters.vehicle) return false;
-      if (filters.code && e.code !== filters.code) return false;
-      if (filters.level && e.level !== filters.level) return false;
+    const counts: Record<string, number> = all.reduce((acc, ev) => {
+      acc[ev.vehicleId] = (acc[ev.vehicleId] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-      if (filters.from && new Date(e.timestamp) < new Date(filters.from))
-        return false;
-
-      if (filters.to && new Date(e.timestamp) > new Date(filters.to))
-        return false;
-
-      return true;
-    });
-  }
-  getPaginatedEvents(filters: EventFiltersDto, page = 1, limit = 20) {
-    const all = this.getEvents(filters); // reuse your existing filtering logic
-
-    const total = all.length;
-    const start = (page - 1) * limit;
-    const end = start + limit;
-
-    return {
-      page,
-      limit,
-      total,
-      data: all.slice(start, end)
-    };
+    return counts;
   }
 
-  errorsPerVehicle() {
-  const all = this.repo.findAll();
-
-  const counts = all.reduce((acc, ev) => {
-    acc[ev.vehicleId] = (acc[ev.vehicleId] || 0) + 1;
-    return acc;
-  }, {});
-
-  return counts;
-}
-
+  
   topErrorCodes() {
-  const all = this.repo.findAll();
+    const all = this.repo.findAll();
 
-  const counts = all.reduce((acc, ev) => {
-    acc[ev.code] = (acc[ev.code] || 0) + 1;
-    return acc;
-  }, {});
+    const counts: Record<string, number> = all.reduce((acc, ev) => {
+      acc[ev.code] = (acc[ev.code] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-  // sort top 5 by frequency
-  return (Object.entries(counts) as [string, number][])
-  .sort((a, b) => b[1] - a[1])
-  .slice(0, 5)
-  .map(([code, count]) => ({ code, count }))
-}
-
+    return (Object.entries(counts) as [string, number][])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([code, count]) => ({ code, count }));
+  }
 }

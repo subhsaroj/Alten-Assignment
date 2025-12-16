@@ -5,8 +5,7 @@
 
   <!-- EVENTS TABLE -->
   <app-events-table
-    [eventsResponse]="store.events$ | async"
-    (pageChange)="store.setPage($event.page); store.setLimit($event.limit)">
+    >
   </app-events-table>
 
   <!-- SUMMARY -->

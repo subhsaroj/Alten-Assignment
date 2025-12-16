@@ -1,23 +1,40 @@
-import { IsOptional, IsString, IsIn, IsDateString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsNumberString } from 'class-validator';
 
 export class EventFiltersDto {
+
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   vehicle?: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   code?: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsIn(['ERROR', 'WARN', 'INFO'])
+  @IsString()
   level?: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsDateString()
+  @IsString()
   from?: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsDateString()
+  @IsString()
   to?: string;
+
+  @ApiPropertyOptional({ default: 1 })
+  @IsOptional()
+  @IsNumberString()
+  page?: number = 1;
+
+  @ApiPropertyOptional({ default: 20 })
+  @IsOptional()
+  @IsNumberString()
+  limit?: number = 20;
 }

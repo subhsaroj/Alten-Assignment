@@ -1,47 +1,54 @@
-<table mat-table [dataSource]="events" class="mat-elevation-z1 full-width">
+<div class="events-table-container">
+  <div class="table-scroll">
 
-  <!-- Timestamp -->
-  <ng-container matColumnDef="timestamp">
-    <th mat-header-cell *matHeaderCellDef> Timestamp </th>
-    <td mat-cell *matCellDef="let e"> {{ e.timestamp }} </td>
-  </ng-container>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z1 full-width">
 
-  <!-- Vehicle -->
-  <ng-container matColumnDef="vehicleId">
-    <th mat-header-cell *matHeaderCellDef> Vehicle </th>
-    <td mat-cell *matCellDef="let e"> {{ e.vehicleId }} </td>
-  </ng-container>
+      <!-- Timestamp -->
+      <ng-container matColumnDef="timestamp">
+        <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+        <td mat-cell *matCellDef="let e"> {{ e.timestamp }} </td>
+      </ng-container>
 
-  <!-- Severity -->
-  <ng-container matColumnDef="level">
-    <th mat-header-cell *matHeaderCellDef> Severity </th>
-    <td mat-cell *matCellDef="let e">
-      <span class="badge" [ngClass]="e.level">{{ e.level }}</span>
-    </td>
-  </ng-container>
+      <!-- Vehicle -->
+      <ng-container matColumnDef="vehicleId">
+        <th mat-header-cell *matHeaderCellDef> Vehicle </th>
+        <td mat-cell *matCellDef="let e"> {{ e.vehicleId }} </td>
+      </ng-container>
 
-  <!-- Code -->
-  <ng-container matColumnDef="code">
-    <th mat-header-cell *matHeaderCellDef> Code </th>
-    <td mat-cell *matCellDef="let e"> {{ e.code }} </td>
-  </ng-container>
+      <!-- Severity -->
+      <ng-container matColumnDef="level">
+        <th mat-header-cell *matHeaderCellDef> Severity </th>
+        <td mat-cell *matCellDef="let e">
+          <span class="badge" [ngClass]="e.level">{{ e.level }}</span>
+        </td>
+      </ng-container>
 
-  <!-- Message -->
-  <ng-container matColumnDef="message">
-    <th mat-header-cell *matHeaderCellDef> Message </th>
-    <td mat-cell *matCellDef="let e"> {{ e.message }} </td>
-  </ng-container>
+      <!-- Code -->
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef> Code </th>
+        <td mat-cell *matCellDef="let e"> {{ e.code }} </td>
+      </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="['timestamp','vehicleId','level','code','message']"></tr>
-  <tr mat-row *matRowDef="let row; columns: ['timestamp','vehicleId','level','code','message']"></tr>
+      <!-- Message -->
+      <ng-container matColumnDef="message">
+        <th mat-header-cell *matHeaderCellDef> Message </th>
+        <td mat-cell *matCellDef="let e"> {{ e.message }} </td>
+      </ng-container>
 
-</table>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-<!-- PAGINATOR -->
-<mat-paginator
-  [length]="eventsResponse?.total ?? 0"
-  [pageIndex]="(eventsResponse?.page ?? 1) - 1"
-  [pageSize]="eventsResponse?.limit ?? 20"
-  [pageSizeOptions]="[10, 20, 50, 100]"
-  (page)="onPageChange($event)">
-</mat-paginator>
+    </table>
+
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator
+    *ngIf="eventsResponse"
+    [length]="eventsResponse.total"
+    [pageIndex]="eventsResponse.page - 1"
+    [pageSize]="eventsResponse.limit"
+    [pageSizeOptions]="[10, 20, 50, 100]"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</div>

@@ -9,12 +9,15 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getEvents(filters: EventFilters): Observable<DiagnosticEvent[]> {
-    let params = new HttpParams();
-    Object.entries(filters).forEach(([k, v]) => { if (v) params = params.set(k, v); });
+ getEvents(filters: any) {
+  return this.http.get<{
+    data: DiagnosticEvent[];
+    total: number;
+    page: number;
+    limit: number;
+  }>('http://localhost:3000/events', { params: filters });
+}
 
-    return this.http.get<DiagnosticEvent[]>(`${this.baseUrl}/events`, { params });
-  }
 
  getErrorsPerVehicle() {
   return this.http.get<Record<string, number>>(`${this.baseUrl}/events/stats/errors-per-vehicle`);

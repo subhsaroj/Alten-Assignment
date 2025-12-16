@@ -1,29 +1,43 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { MaterialModule } from '../../core/material.module';
-import { NgFor, NgClass, CommonModule } from '@angular/common';
+import { Component, effect } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { EventsStore } from '../../core/state/events.store';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-events-table',
   standalone: true,
-  imports: [MaterialModule, CommonModule, NgClass,MatPaginatorModule],
   templateUrl: './events-table.component.html',
-  styleUrls: ['./events-table.component.scss']
+  styleUrls: ['./events-table.component.scss'],
+  imports: [
+    MatTableModule,
+    MatPaginatorModule,
+    CommonModule
+  ]
 })
 export class EventsTableComponent {
 
-  @Input() eventsResponse: any | null = null;
+  displayedColumns = ['timestamp', 'vehicleId', 'level', 'code', 'message'];
+  dataSource = new MatTableDataSource<any>([]);
+  eventsResponse: any = null;
 
-  @Output() pageChange = new EventEmitter<{ page: number; limit: number }>();
+  constructor(public store: EventsStore) {
 
-  get events() {
-    return this.eventsResponse?.data ?? [];
+    // ✔ THIS RUNS INSIDE AN INJECTION CONTEXT
+    effect(() => {
+      const res = this.store.events();
+      if (!res) return;
+
+      this.eventsResponse = res;
+      this.dataSource.data = res.data;
+    });
   }
 
   onPageChange(event: PageEvent) {
-    this.pageChange.emit({
-      page: event.pageIndex + 1,
-      limit: event.pageSize
-    });
+    const newPage = event.pageIndex + 1;
+    const newLimit = event.pageSize;
+
+    this.store.setLimit(newLimit);
+    this.store.setPage(newPage);
   }
 }

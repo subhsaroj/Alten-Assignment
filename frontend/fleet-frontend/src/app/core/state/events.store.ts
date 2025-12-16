@@ -1,60 +1,71 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { ApiService } from '../services/api.service';
-import { EventFilters } from '../../models/diagnostic-event.model';
-import { switchMap, shareReplay } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs/operators';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class EventsStore {
 
- 
-  private filters = signal<EventFilters>({
+  constructor(private api: ApiService) {}
+
+  // ------------------------------
+  // FILTER SIGNAL
+  // ------------------------------
+  filters = signal({
     vehicle: '',
     code: '',
     level: '',
     from: '',
-    to: ''
+    to: '',
+    page: 1,
+    limit: 20
   });
 
 
-  page = signal(1);
-  limit = signal(20);
-
-  constructor(private api: ApiService) {}
-
-
-  events$ = toObservable(
-    computed(() => ({
-      filters: this.filters(),
-      page: this.page(),
-      limit: this.limit()
-    }))
-  ).pipe(
-    switchMap(req =>
-      this.api.getEvents({
-        ...req.filters,
-        page: req.page,
-        limit: req.limit
-      })
+  events = toSignal(
+    toObservable(this.filters).pipe(
+      switchMap((f) => this.api.getEvents(f))
     ),
-    shareReplay(1)
+    { initialValue: null }
   );
 
+  paginatedData = computed(() => {
+    const ev: any = this.events();
+    return ev && ev['data'] ? ev['data'] : [];
+  });
 
-  updateFilters(newFilters: Partial<EventFilters>) {
-    this.filters.update(curr => ({
-      ...curr,
-      ...newFilters
-    }));
-    this.page.set(1); // reset to first page on filter change
-  }
+  total = computed(() => {
+    const ev: any = this.events();
+    return ev && ev['total'] ? ev['total'] : 0;
+  });
+
+  page = computed(() => this.filters().page);
+  limit = computed(() => this.filters().limit);
+
+ 
+  updateFilters(newFilters: any) {
+  this.filters.update((curr) => ({
+    ...curr,
+    ...newFilters,
+    page: 1
+  }));
+}
 
 
   setPage(page: number) {
-    this.page.set(page);
+    this.filters.update((curr) => ({
+      ...curr,
+      page
+    }));
   }
 
   setLimit(limit: number) {
-    this.limit.set(limit);
+    this.filters.update((curr) => ({
+      ...curr,
+      limit,
+      page: 1
+    }));
   }
 }
