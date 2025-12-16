@@ -1,8 +1,14 @@
+
 .summary-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;     
+}
+
+mat-expansion-panel {
+  border-radius: 50px;
+  overflow: hidden;  
+   margin-bottom: 16px;
 }
 
 .summary-card {
@@ -54,4 +60,46 @@
   .summary-container {
     grid-template-columns: 1fr;
   }
+}
+
+.summary-container-horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.summary-wrapper {
+  flex: 1;
+  min-width: 280px;
+  position: relative;
+}
+
+.summary-panel {
+  width: 100%;
+}
+
+.summary-panel {
+  flex: 1;
+  min-width: 300px;
+}
+
+.summary-card {
+  width: 100%;
+}
+
+.summary-header,
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.header {
+  font-weight: 600;
+  color: #555;
+}
+
+.critical-status {
+  color: #c62828;
+  font-weight: 600;
 }

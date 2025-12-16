@@ -13,7 +13,10 @@ getEvents(@Query() filters: EventFiltersDto) {
   return this.service.getPaginatedEvents(filters);
 }
 
-
+@Get('stats/critical-vehicles')
+getCriticalVehicles() {
+  return this.service.getCriticalVehicles();
+}
 
   @Get('stats/errors-per-vehicle')
   errorsPerVehicle() {

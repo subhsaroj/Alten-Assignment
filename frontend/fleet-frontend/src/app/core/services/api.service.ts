@@ -27,4 +27,10 @@ getTopErrorCodes() {
   return this.http.get<{ code: string; count: number }[]>(`${this.baseUrl}/events/stats/top-error-codes`);
 }
 
+getCriticalVehicles() {
+  return this.http.get<{ criticalVehicles: string[] }>(
+    `${this.baseUrl}/events/stats/critical-vehicles`
+  );
+}
+
 }

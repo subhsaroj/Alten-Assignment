@@ -86,5 +86,42 @@ export class EventsService {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([code, count]) => ({ code, count }));
+  } 
+
+ getCriticalVehicles() {
+  const events = this.repo.findAll();
+  const now = new Date();
+
+  
+  const SIX_MONTHS_MS = 390* 24 * 60 * 60 * 1000;
+
+
+  const map = new Map<string, any[]>();
+  for (const ev of events) {
+    if (!map.has(ev.vehicleId)) map.set(ev.vehicleId, []);
+    map.get(ev.vehicleId)!.push(ev);
   }
+
+  const criticalVehicles: string[] = [];
+
+  for (const [vehicleId, evts] of map.entries()) {
+
+
+    const hasCritical = evts.some(e => e.level === 'CRITICAL');
+
+    const recentErrors = evts.filter(e =>
+      e.level === 'ERROR' &&
+      (now.getTime() - new Date(e.timestamp).getTime()) <= SIX_MONTHS_MS
+    );
+
+    if (hasCritical || recentErrors.length >= 3) {
+      criticalVehicles.push(vehicleId);
+    }
+  }
+
+  return { criticalVehicles };
+}
+
+
+
 }
