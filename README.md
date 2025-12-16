@@ -18,6 +18,12 @@ ng serve
 Frontend runs on:
 http://localhost:4200
 
+Run:
+npx ts-node src/seed/seed.ts
+This will:
+✔ Generate new events
+✔ Overwrite sample.log
+✔ Print seed generated: XXXX events
 
 Features Implemented:
 - Filtering, summary, scrollable table.
