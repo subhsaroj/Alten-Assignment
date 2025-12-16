@@ -1,0 +1,73 @@
+<div class="filter-container">
+
+  <!-- Vehicle -->
+  <mat-form-field appearance="outline">
+    <mat-label>Vehicle ID</mat-label>
+    <input matInput (input)="setVehicle($event)" [value]="vehicle">
+  </mat-form-field>
+
+  <!-- Error Code -->
+  <mat-form-field appearance="outline">
+    <mat-label>Error Code</mat-label>
+    <input matInput (input)="setCode($event)" [value]="code">
+  </mat-form-field>
+
+  <!-- Severity -->
+  <mat-form-field appearance="outline">
+    <mat-label>Severity</mat-label>
+    <mat-select [value]="level" (selectionChange)="setLevel($event.value)">
+      <mat-option value="">All</mat-option>
+      <mat-option value="ERROR">Error</mat-option>
+      <mat-option value="WARN">Warn</mat-option>
+      <mat-option value="INFO">Info</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- From Date -->
+  <mat-form-field appearance="outline">
+    <mat-label>From Date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="fromPicker"
+      (dateChange)="onFromDateChange($event)"
+      [value]="fromDate">
+    <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+    <mat-datepicker #fromPicker></mat-datepicker>
+  </mat-form-field>
+
+  <!-- From Time -->
+  <mat-form-field appearance="outline">
+    <mat-label>From Time</mat-label>
+    <input matInput type="time" (change)="onFromTimeChange($event)" [value]="fromTime">
+  </mat-form-field>
+
+  <!-- To Date -->
+  <mat-form-field appearance="outline">
+    <mat-label>To Date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="toPicker"
+      (dateChange)="onToDateChange($event)"
+      [value]="toDate">
+    <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+    <mat-datepicker #toPicker></mat-datepicker>
+  </mat-form-field>
+
+  <!-- To Time -->
+  <mat-form-field appearance="outline">
+    <mat-label>To Time</mat-label>
+    <input matInput type="time" (change)="onToTimeChange($event)" [value]="toTime">
+  </mat-form-field>
+
+</div>
+
+<!-- ACTION BUTTONS -->
+<div class="filter-btns">
+  <button mat-raised-button color="primary" (click)="applyFilter()">
+    Apply Filter
+  </button>
+
+  <button mat-stroked-button color="warn" (click)="resetFilter()">
+    Reset
+  </button>
+</div>

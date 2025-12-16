@@ -1,0 +1,39 @@
+<div class="summary-container">
+
+  <mat-card class="summary-card">
+    <mat-card-header>
+      <mat-icon class="summary-icon error">directions_car</mat-icon>
+      <mat-card-title>Errors Per Vehicle</mat-card-title>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <ng-container *ngIf="errorsPerVehicle$ | async as ev">
+        <div *ngFor="let item of ev | keyvalue" class="summary-row">
+          <span class="label">{{ item.key }}</span>
+          <span class="value">{{ item.value }}</span>
+        </div>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="summary-card">
+    <mat-card-header>
+      <mat-icon class="summary-icon codes">bar_chart</mat-icon>
+      <mat-card-title>Top Error Codes</mat-card-title>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <ng-container *ngIf="topErrorCodes$ | async as top">
+        <div *ngFor="let c of top" class="summary-row">
+          <span class="label">{{ c.code }}</span>
+          <span class="value">{{ c.count }}</span>
+        </div>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+
+</div>
