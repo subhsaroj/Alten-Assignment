@@ -3,104 +3,114 @@
 
   <div class="summary-wrapper">
 
-  <mat-expansion-panel [expanded]="false" class="summary-panel">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <mat-icon class="summary-icon error">directions_car</mat-icon>
-        Errors Per Vehicle
-      </mat-panel-title>
-    </mat-expansion-panel-header>
+    <mat-expansion-panel [expanded]="false" class="summary-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="summary-icon error">directions_car</mat-icon>
+          Errors Per Vehicle
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-card class="summary-card">
-      <mat-card-content>
+      <mat-card class="summary-card">
+        <mat-card-content>
 
-        <!-- Header -->
-        <div class="summary-header">
-          <span class="label header">Vehicle</span>
-          <span class="value header">No. of Errors</span>
-        </div>
-        <mat-divider></mat-divider>
-
-        <!-- Rows -->
-        <ng-container *ngIf="errorsPerVehicle$ | async as ev">
-          <div *ngFor="let item of ev | keyvalue" class="summary-row">
-            <span class="label">{{ item.key }}</span>
-            <span class="value">{{ item.value }}</span>
+          <!-- Header -->
+          <div class="summary-header">
+            <span class="label header">Vehicle</span>
+            <span class="value header">No. of Errors</span>
           </div>
-        </ng-container>
+          <mat-divider></mat-divider>
 
-      </mat-card-content>
-    </mat-card>
-  </mat-expansion-panel>
-</div>
+          <!-- Rows -->
+          <ng-container *ngIf="errorsPerVehicle$ | async as ev">
+            <div *ngFor="let item of ev | keyvalue" class="summary-row">
+              <span class="label">{{ item.key }}</span>
+              <span class="value">{{ item.value }}</span>
+            </div>
+          </ng-container>
+
+        </mat-card-content>
+      </mat-card>
+    </mat-expansion-panel>
+  </div>
 
 
   <!-- TOP ERROR CODES -->
-  
+
 
   <div class="summary-wrapper">
-  <mat-expansion-panel [expanded]="false" class="summary-panel">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <mat-icon class="summary-icon codes">bar_chart</mat-icon>
-        Top Error Codes
-      </mat-panel-title>
-    </mat-expansion-panel-header>
+    <mat-expansion-panel [expanded]="false" class="summary-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="summary-icon codes">bar_chart</mat-icon>
+          Top Error Codes
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <mat-card class="summary-card">
-      <mat-card-content>
+      <mat-card class="summary-card">
+        <mat-card-content>
 
-        <!-- Header -->
-        <div class="summary-header">
-          <span class="label header">Error Code</span>
-          <span class="value header">Count</span>
-        </div>
-        <mat-divider></mat-divider>
-
-        <!-- Rows -->
-        <ng-container *ngIf="topErrorCodes$ | async as top">
-          <div *ngFor="let c of top" class="summary-row">
-            <span class="label">{{ c.code }}</span>
-            <span class="value">{{ c.count }}</span>
+          <!-- Header -->
+          <div class="summary-header">
+            <span class="label header">Error Code</span>
+            <span class="value header">Count</span>
           </div>
-        </ng-container>
+          <mat-divider></mat-divider>
 
-      </mat-card-content>
-    </mat-card>
-  </mat-expansion-panel>
+          <!-- Rows -->
+          <ng-container *ngIf="topErrorCodes$ | async as top">
+            <div *ngFor="let c of top" class="summary-row">
+              <span class="label">{{ c.code }}</span>
+              <span class="value">{{ c.count }}</span>
+            </div>
+          </ng-container>
 
-</div>
+        </mat-card-content>
+      </mat-card>
+    </mat-expansion-panel>
+
+  </div>
 
   <!-- CRITICAL VEHICLES -->
-   <div class="summary-wrapper">
-  <mat-expansion-panel [expanded]="false" class="summary-panel">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <mat-icon class="summary-icon critical">report</mat-icon>
-        Critical Vehicles For 390 Days
-      </mat-panel-title>
-    </mat-expansion-panel-header>
+  <div class="summary-wrapper">
+    <mat-expansion-panel [expanded]="false" class="summary-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="summary-icon critical">report</mat-icon>
+          Critical Vehicles
 
-    <mat-card class="summary-card">
-      <mat-card-content>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-form-field appearance="outline">
+        <mat-label>Critical Window (days)</mat-label>
+        <input matInput type="number" [(ngModel)]="criticalDays">
 
-        <!-- Header -->
-        <div class="summary-header">
-          <span class="label header">Vehicle</span>
-          <span class="value header">Status</span>
-        </div>
-        <mat-divider></mat-divider>
+      </mat-form-field>
+      
+      <button mat-raised-button color="primary" (click)="loadCritical()">
+        Apply
+      </button>
+      <span style="font-size: small;">Ex. 390 days to get Result as we have in Sample log</span>
+      <mat-card class="summary-card">
+        <mat-card-content>
 
-        <!-- Rows -->
-        <ng-container *ngIf="criticalVehicles">
-          <div *ngFor="let v of criticalVehicles" class="summary-row">
-            <span class="label">{{ v }}</span>
-            <span class="value status critical-status">CRITICAL</span>
+          <!-- Header -->
+          <div class="summary-header">
+            <span class="label header">Vehicle</span>
+            <span class="value header">Status</span>
           </div>
-        </ng-container>
+          <mat-divider></mat-divider>
 
-      </mat-card-content>
-    </mat-card>
-  </mat-expansion-panel>
-</div>
+          <!-- Rows -->
+          <ng-container *ngIf="criticalVehicles$ | async as cv">
+            <div *ngFor="let v of cv.criticalVehicles" class="summary-row">
+              <span class="label">{{ v }}</span>
+              <span class="value critical-status">CRITICAL</span>
+            </div>
+          </ng-container>
+
+        </mat-card-content>
+      </mat-card>
+    </mat-expansion-panel>
+  </div>
 </div>

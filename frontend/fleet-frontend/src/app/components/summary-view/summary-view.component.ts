@@ -15,18 +15,23 @@ import { MatExpansionModule } from '@angular/material/expansion';
   imports: [FormsModule, MaterialModule, MatCardModule, CommonModule, MatDivider,MatExpansionModule],
 })
 export class SummaryViewComponent implements OnInit {
-criticalVehicles: string[] = [];
-  errorsPerVehicle$!: Observable<Record<string, number>>;
-  topErrorCodes$!: Observable<{ code: string; count: number }[]>;
 
+  errorsPerVehicle$!: Observable<Record<string, number>>;
+criticalVehicles$!: Observable<any>;
+  topErrorCodes$!: Observable<{ code: string; count: number }[]>;
+criticalDays = 180;
   constructor(private api: ApiService) { }
 
   ngOnInit() {
     this.errorsPerVehicle$ = this.api.getErrorsPerVehicle();
     this.topErrorCodes$ = this.api.getTopErrorCodes();
-    this.api.getCriticalVehicles().subscribe(res => {
-    this.criticalVehicles = res.criticalVehicles;
-  });
+    this.criticalVehicles$ = this.api.getCriticalVehicles(this.criticalDays);
   }
 
+
+
+
+loadCritical() {
+  this.criticalVehicles$ = this.api.getCriticalVehicles(this.criticalDays);
+}
 }

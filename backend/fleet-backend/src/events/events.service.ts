@@ -88,13 +88,11 @@ export class EventsService {
       .map(([code, count]) => ({ code, count }));
   } 
 
- getCriticalVehicles() {
+ getCriticalVehicles(days: number) {
   const events = this.repo.findAll();
   const now = new Date();
 
-  
-  const SIX_MONTHS_MS = 390* 24 * 60 * 60 * 1000;
-
+  const windowMs = days * 24 * 60 * 60 * 1000;
 
   const map = new Map<string, any[]>();
   for (const ev of events) {
@@ -106,12 +104,11 @@ export class EventsService {
 
   for (const [vehicleId, evts] of map.entries()) {
 
-
     const hasCritical = evts.some(e => e.level === 'CRITICAL');
 
     const recentErrors = evts.filter(e =>
       e.level === 'ERROR' &&
-      (now.getTime() - new Date(e.timestamp).getTime()) <= SIX_MONTHS_MS
+      now.getTime() - new Date(e.timestamp).getTime() <= windowMs
     );
 
     if (hasCritical || recentErrors.length >= 3) {
@@ -119,8 +116,9 @@ export class EventsService {
     }
   }
 
-  return { criticalVehicles };
+  return { criticalVehicles, windowDays: days };
 }
+
 
 
 

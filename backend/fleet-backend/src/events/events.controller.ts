@@ -14,8 +14,9 @@ getEvents(@Query() filters: EventFiltersDto) {
 }
 
 @Get('stats/critical-vehicles')
-getCriticalVehicles() {
-  return this.service.getCriticalVehicles();
+criticalVehicles(@Query('days') days: string) {
+  const numDays = Number(days) || 180; // default to 6 months
+  return this.service.getCriticalVehicles(numDays);
 }
 
   @Get('stats/errors-per-vehicle')
